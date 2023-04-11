@@ -1,0 +1,90 @@
+//Создать двухсвязный список из N элементов целого типа, вывести его на экран.
+//Удалить из списка все элементы, которые меньше своего соседа слева(учесть
+  //  ситуацию, что сосед слева по мере продвижения по списку может меняться).
+    //Снова вывести список на экран.Библиотеку STL использовать запрещено!
+
+#include <iostream>
+
+using namespace std;
+
+struct Node {
+    int data;
+    Node* previous;
+    Node* next;
+};
+
+Node* createNode(int data) {
+    Node* node = new Node;
+    node->data = data;
+    node->previous = nullptr;
+    node->next = nullptr;
+    return node;
+}
+
+void addingNode(Node*& head, Node* node) {
+    if (head == nullptr) {
+        head = node;
+        return;
+    }
+    Node* current = head;
+    while (current->next != nullptr) {
+        current = current->next;
+    }
+    current->next = node;
+    node->previous = current;
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current != nullptr) {
+        cout << current->data << " ";
+        current = current->next;
+    }
+    cout << endl;
+}
+
+void deleteNode(Node*& head) {
+    Node* current = head;
+    while (current != nullptr && current->next != nullptr) {
+        if (current->data < current->next->data) {
+            if (current->previous == nullptr) {
+                head = current->next;
+                head->previous = nullptr;
+            }
+            else {
+                current->previous->next = current->next;
+                current->next->previous = current->previous;
+            }
+            Node* temp = current;
+            current = current->next;
+            delete temp;
+        }
+        else {
+            current = current->next;
+        }
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    Node* head = nullptr;
+
+    for (int i = 0; i < n; i++) {
+        int data;
+        cin >> data;
+        Node* node = createNode(data);
+        addingNode(head, node);
+    }
+
+    cout << "Первоначальный список: ";
+    printList(head);
+
+    deleteNode(head);
+
+    cout << "Измененный список: ";
+    printList(head);
+
+    return 0;
+}
